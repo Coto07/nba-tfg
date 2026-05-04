@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'balldontlie' => [
+    'key' => env('BALLDONTLIE_API_KEY'),
+],
+
 ];
+
+
