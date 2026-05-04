@@ -18,8 +18,8 @@ class SyncPlayers extends Command
         $season = (int) $this->option('season');
         $this->info("Sincronizando jugadores temporada {$season}...");
 
-        $page    = 1;
-        $total   = 0;
+        $page  = 1;
+        $total = 0;
 
         do {
             $response = $api->getPlayers($page, 100);
@@ -52,58 +52,71 @@ class SyncPlayers extends Command
 
             $this->info("  Página {$page} procesada ({$total} jugadores)...");
             $page++;
-
-            // Respeta el rate limit de la API
-            usleep(300000); // 0.3 segundos
+            usleep(300000);
 
         } while (isset($meta['next_cursor']));
 
         $this->info("✅ {$total} jugadores sincronizados.");
 
-        // Sincronizar estadísticas
         $this->info("Sincronizando estadísticas temporada {$season}...");
         $this->syncStats($api, $season);
     }
 
     private function syncStats(BallDontLieService $api, int $season): void
     {
-        $page  = 1;
-        $total = 0;
+        $total   = 0;
+        $players = Player::whereNotNull('team_id')->get();
 
-        do {
-            $response = $api->getPlayerStatsBySeason($season, $page);
-            $stats    = $response['data'] ?? [];
-            $meta     = $response['meta'] ?? [];
+        foreach ($players as $player) {
+            $stats = $api->getStatsByPlayer($player->api_id, $season);
 
-            if (empty($stats)) break;
-
-            foreach ($stats as $stat) {
-                $player = Player::where('api_id', $stat['player_id'])->first();
-                if (!$player) continue;
-
-                PlayerStat::updateOrCreate(
-                    ['player_id' => $player->id, 'season' => $season],
-                    [
-                        'games_played' => $stat['games_played'] ?? 0,
-                        'pts'          => $stat['pts'] ?? 0,
-                        'reb'          => $stat['reb'] ?? 0,
-                        'ast'          => $stat['ast'] ?? 0,
-                        'stl'          => $stat['stl'] ?? 0,
-                        'blk'          => $stat['blk'] ?? 0,
-                        'fg_pct'       => $stat['fg_pct'] ?? 0,
-                        'fg3_pct'      => $stat['fg3_pct'] ?? 0,
-                        'ft_pct'       => $stat['ft_pct'] ?? 0,
-                        'min'          => $stat['min'] ?? 0,
-                        'turnover'     => $stat['turnover'] ?? 0,
-                    ]
-                );
-                $total++;
+            if (empty($stats)) {
+                usleep(200000);
+                continue;
             }
 
-            $page++;
-            usleep(300000);
+            // Calcular promedios manualmente
+            $games    = count($stats);
+            $pts      = collect($stats)->avg('pts') ?? 0;
+            $reb      = collect($stats)->avg('reb') ?? 0;
+            $ast      = collect($stats)->avg('ast') ?? 0;
+            $stl      = collect($stats)->avg('stl') ?? 0;
+            $blk      = collect($stats)->avg('blk') ?? 0;
+            $fg_pct   = collect($stats)->avg('fg_pct') ?? 0;
+            $fg3_pct  = collect($stats)->avg('fg3_pct') ?? 0;
+            $ft_pct   = collect($stats)->avg('ft_pct') ?? 0;
+            $turnover = collect($stats)->avg('turnover') ?? 0;
 
-        } while (isset($meta['next_cursor']));
+            // Calcular minutos promedio
+            $minutes = collect($stats)->map(function ($s) {
+                if (empty($s['min'])) return 0;
+                $parts = explode(':', $s['min']);
+                return isset($parts[1])
+                    ? (int)$parts[0] + ((int)$parts[1] / 60)
+                    : (float)$parts[0];
+            })->avg();
+
+            PlayerStat::updateOrCreate(
+                ['player_id' => $player->id, 'season' => $season],
+                [
+                    'games_played' => $games,
+                    'pts'          => round($pts, 2),
+                    'reb'          => round($reb, 2),
+                    'ast'          => round($ast, 2),
+                    'stl'          => round($stl, 2),
+                    'blk'          => round($blk, 2),
+                    'fg_pct'       => round($fg_pct, 4),
+                    'fg3_pct'      => round($fg3_pct, 4),
+                    'ft_pct'       => round($ft_pct, 4),
+                    'min'          => round($minutes, 2),
+                    'turnover'     => round($turnover, 2),
+                ]
+            );
+
+            $total++;
+            $this->info("  ✅ {$player->first_name} {$player->last_name} ({$games} partidos)");
+            usleep(300000);
+        }
 
         $this->info("✅ {$total} estadísticas sincronizadas.");
     }

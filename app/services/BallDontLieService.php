@@ -12,7 +12,7 @@ class BallDontLieService
 
     public function __construct()
     {
-        $this->apiKey = config('services.balldontlie.key');
+        $this->apiKey = env('BALLDONTLIE_API_KEY');
     }
 
     private function get(string $endpoint, array $params = []): array
@@ -41,28 +41,19 @@ class BallDontLieService
 
     public function getPlayers(int $page = 1, int $perPage = 100): array
     {
-        $response = $this->get('/players', [
+        return $this->get('/players', [
             'page'     => $page,
             'per_page' => $perPage,
         ]);
-        return $response;
     }
 
-    public function getPlayerStatsBySeason(int $season, int $page = 1): array
+    public function getStatsByPlayer(int $playerId, int $season): array
     {
-        $response = $this->get('/season_averages', [
-            'season' => $season,
-            'page'   => $page,
-        ]);
-        return $response;
-    }
-
-    public function getPlayerStats(int $playerId, int $season): array
-    {
-        $response = $this->get('/season_averages', [
-            'season'     => $season,
+        $response = $this->get('/stats', [
             'player_ids[]' => $playerId,
+            'seasons[]'    => $season,
+            'per_page'     => 100,
         ]);
-        return $response['data'][0] ?? [];
+        return $response['data'] ?? [];
     }
 }
