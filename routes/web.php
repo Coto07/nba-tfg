@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\InjuryController;
+use App\Http\Controllers\SimulatorController;
 
 Route::get('/', fn() => view('home'))->name('home');
 
@@ -20,5 +21,6 @@ Route::get('/injuries', [InjuryController::class, 'index'])->name('injuries.inde
 Route::post('/injuries', [InjuryController::class, 'store'])->name('injuries.store');
 Route::delete('/injuries/{injury}', [InjuryController::class, 'destroy'])->name('injuries.destroy');
 
-// Rutas temporales
-Route::get('/simulator', fn() => view('coming-soon', ['section' => 'Simulador']))->name('simulator.index');
+// Simulador
+Route::get('/simulator', [SimulatorController::class, 'index'])->name('simulator.index');
+Route::post('/simulator', [SimulatorController::class, 'simulate'])->name('simulator.simulate');
