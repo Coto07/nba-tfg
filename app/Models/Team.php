@@ -35,4 +35,23 @@ class Team extends Model
     {
         return $this->hasMany(Simulation::class, 'away_team_id');
     }
+
+    public function getLogoUrlAttribute(): string
+    {
+        $map = [
+            'BKN' => 'bkn',
+            'GSW' => 'gs',
+            'NOP' => 'no',
+            'NYK' => 'ny',
+            'OKC' => 'okc',
+            'PHX' => 'phx',
+            'SAS' => 'sa',
+            'UTA' => 'utah',
+        ];
+
+        $abbr     = strtolower($this->abbreviation);
+        $espnAbbr = $map[$this->abbreviation] ?? $abbr;
+
+        return 'https://a.espncdn.com/i/teamlogos/nba/500/' . $espnAbbr . '.png';
+    }
 }

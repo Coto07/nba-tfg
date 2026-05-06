@@ -14,7 +14,7 @@
 <form method="GET" action="{{ route('teams.index') }}" class="row g-2 mb-4">
     <div class="col-md-5">
         <input type="text" name="search" class="form-control bg-dark text-white border-secondary"
-               placeholder="Buscar equipo..." value="{{ request('search') }}">
+            placeholder="Buscar equipo..." value="{{ request('search') }}">
     </div>
     <div class="col-md-3">
         <select name="conference" class="form-select bg-dark text-white border-secondary">
@@ -37,22 +37,27 @@
     @endif
 </form>
 
-{{-- Conferencia Este --}}
+{{-- Conferencia Este y Oeste --}}
 @php
     $east = $teams->filter(fn($t) => trim($t->conference) === 'East');
     $west = $teams->filter(fn($t) => trim($t->conference) === 'West');
 @endphp
 
 @if($east->count() > 0)
-<h5 class="text-secondary mb-3"><i class="bi bi-geo-alt-fill text-warning"></i> Conferencia Este</h5>
+<h5 class="text-secondary mb-3">
+    <i class="bi bi-geo-alt-fill text-warning"></i> Conferencia Este
+</h5>
 <div class="row g-3 mb-4">
     @foreach($east as $team)
     <div class="col-6 col-md-4 col-lg-3">
         <a href="{{ route('teams.show', $team) }}" class="text-decoration-none">
             <div class="card h-100 text-center p-3 team-card">
                 <div class="card-body p-2">
-                    <div class="display-4 mb-2">🏀</div>
-                    <h6 class="card-title mb-1">{{ $team->full_name }}</h6>
+                    <img src="{{ $team->logo_url }}"
+                         alt="{{ $team->full_name }}"
+                         style="width:80px;height:80px;object-fit:contain;"
+                         onerror="this.src='https://a.espncdn.com/i/teamlogos/nba/500/nba.png'">
+                    <h6 class="card-title mb-1 mt-2">{{ $team->full_name }}</h6>
                     <span class="badge bg-warning text-dark">{{ $team->abbreviation }}</span>
                     <p class="text-secondary small mt-2 mb-0">{{ $team->division }}</p>
                 </div>
@@ -64,15 +69,20 @@
 @endif
 
 @if($west->count() > 0)
-<h5 class="text-secondary mb-3"><i class="bi bi-geo-alt-fill text-warning"></i> Conferencia Oeste</h5>
+<h5 class="text-secondary mb-3">
+    <i class="bi bi-geo-alt-fill text-warning"></i> Conferencia Oeste
+</h5>
 <div class="row g-3">
     @foreach($west as $team)
     <div class="col-6 col-md-4 col-lg-3">
         <a href="{{ route('teams.show', $team) }}" class="text-decoration-none">
             <div class="card h-100 text-center p-3 team-card">
                 <div class="card-body p-2">
-                    <div class="display-4 mb-2">🏀</div>
-                    <h6 class="card-title mb-1">{{ $team->full_name }}</h6>
+                    <img src="{{ $team->logo_url }}"
+                         alt="{{ $team->full_name }}"
+                         style="width:80px;height:80px;object-fit:contain;"
+                         onerror="this.src='https://a.espncdn.com/i/teamlogos/nba/500/nba.png'">
+                    <h6 class="card-title mb-1 mt-2">{{ $team->full_name }}</h6>
                     <span class="badge bg-warning text-dark">{{ $team->abbreviation }}</span>
                     <p class="text-secondary small mt-2 mb-0">{{ $team->division }}</p>
                 </div>

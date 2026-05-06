@@ -13,7 +13,9 @@
     <div class="row align-items-center justify-content-center g-4">
         {{-- Equipo local --}}
         <div class="col-md-4 text-center">
-            <div class="display-6 mb-2">🏀</div>
+            <img src="{{ $result['home_team']->logo_url }}"
+     alt="{{ $result['home_team']->full_name }}"
+     style="width:80px;height:80px;object-fit:contain;">
             <h3 class="text-warning fw-bold">{{ $result['home_team']->full_name }}</h3>
             <span class="badge bg-warning text-dark mb-2">LOCAL</span>
             <div class="display-4 fw-bold text-white">{{ $result['home_score'] }}</div>
@@ -39,7 +41,9 @@
 
         {{-- Equipo visitante --}}
         <div class="col-md-4 text-center">
-            <div class="display-6 mb-2">🏀</div>
+            <img src="{{ $result['away_team']->logo_url }}"
+     alt="{{ $result['away_team']->full_name }}"
+     style="width:80px;height:80px;object-fit:contain;">
             <h3 class="text-info fw-bold">{{ $result['away_team']->full_name }}</h3>
             <span class="badge bg-info text-dark mb-2">VISITANTE</span>
             <div class="display-4 fw-bold text-white">{{ $result['away_score'] }}</div>

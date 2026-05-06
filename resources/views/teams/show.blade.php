@@ -7,7 +7,10 @@
 {{-- Cabecera del equipo --}}
 <div class="card mb-4 p-4">
     <div class="d-flex align-items-center gap-4">
-        <div class="display-1">🏀</div>
+        <img src="{{ $team->logo_url }}"
+     alt="{{ $team->full_name }}"
+     style="width:100px;height:100px;object-fit:contain;"
+     onerror="this.src='https://a.espncdn.com/i/teamlogos/nba/500/nba.png'">
         <div>
             <h1 class="text-warning fw-bold mb-1">{{ $team->full_name }}</h1>
             <div class="d-flex gap-2 flex-wrap">
