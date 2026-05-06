@@ -25,17 +25,25 @@
                 @enderror
 
                 <div class="row align-items-center g-3">
+
                     {{-- Equipo local --}}
-                    <div class="col-md-5">
-                        <label class="form-label text-warning fw-bold text-center d-block">
+                    <div class="col-md-5 text-center">
+                        <label class="form-label text-warning fw-bold d-block">
                             <i class="bi bi-house-fill me-1"></i> Equipo Local
                         </label>
+                        <div style="height:80px;" class="d-flex align-items-center justify-content-center mb-2">
+                            <img id="home-logo-img" src="" alt=""
+                                 style="height:80px;object-fit:contain;display:none;">
+                            <i id="home-placeholder" class="bi bi-shield fs-1 text-warning opacity-25"></i>
+                        </div>
                         <select name="home_team_id"
+                                id="home_team_id"
                                 class="form-select bg-dark text-white border-warning text-center"
                                 required>
                             <option value="">Selecciona equipo...</option>
                             @foreach($teams as $team)
                                 <option value="{{ $team->id }}"
+                                        data-logo="{{ $team->logo_url }}"
                                     {{ old('home_team_id') == $team->id ? 'selected' : '' }}>
                                     {{ $team->full_name }}
                                 </option>
@@ -49,16 +57,23 @@
                     </div>
 
                     {{-- Equipo visitante --}}
-                    <div class="col-md-5">
-                        <label class="form-label text-info fw-bold text-center d-block">
+                    <div class="col-md-5 text-center">
+                        <label class="form-label text-info fw-bold d-block">
                             <i class="bi bi-airplane-fill me-1"></i> Equipo Visitante
                         </label>
+                        <div style="height:80px;" class="d-flex align-items-center justify-content-center mb-2">
+                            <img id="away-logo-img" src="" alt=""
+                                 style="height:80px;object-fit:contain;display:none;">
+                            <i id="away-placeholder" class="bi bi-shield fs-1 text-info opacity-25"></i>
+                        </div>
                         <select name="away_team_id"
+                                id="away_team_id"
                                 class="form-select bg-dark text-white border-info text-center"
                                 required>
                             <option value="">Selecciona equipo...</option>
                             @foreach($teams as $team)
                                 <option value="{{ $team->id }}"
+                                        data-logo="{{ $team->logo_url }}"
                                     {{ old('away_team_id') == $team->id ? 'selected' : '' }}>
                                     {{ $team->full_name }}
                                 </option>
@@ -84,13 +99,20 @@
         <div class="card mb-2 p-3">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center gap-3">
-                    <span class="fw-bold text-white">{{ $sim->homeTeam->abbreviation }}</span>
+                    <img src="{{ $sim->homeTeam->logo_url }}"
+                         alt="{{ $sim->homeTeam->abbreviation }}"
+                         style="width:32px;height:32px;object-fit:contain;">
                     <span class="text-warning fw-bold fs-5">
                         {{ $sim->home_score }} - {{ $sim->away_score }}
                     </span>
-                    <span class="fw-bold text-white">{{ $sim->awayTeam->abbreviation }}</span>
+                    <img src="{{ $sim->awayTeam->logo_url }}"
+                         alt="{{ $sim->awayTeam->abbreviation }}"
+                         style="width:32px;height:32px;object-fit:contain;">
                 </div>
                 <div class="text-end">
+                    <div class="small text-white">
+                        {{ $sim->homeTeam->abbreviation }} vs {{ $sim->awayTeam->abbreviation }}
+                    </div>
                     <div class="small text-secondary">
                         Local: {{ $sim->home_win_probability }}% |
                         Visitante: {{ $sim->away_win_probability }}%
@@ -103,6 +125,37 @@
         </div>
         @endforeach
         @endif
+
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    function updateLogo(selectId, imgId, placeholderId) {
+        const select      = document.getElementById(selectId);
+        const img         = document.getElementById(imgId);
+        const placeholder = document.getElementById(placeholderId);
+        const option      = select.options[select.selectedIndex];
+        const logo        = option.getAttribute('data-logo');
+
+        if (logo && select.value !== '') {
+            img.src              = logo;
+            img.alt              = option.text;
+            img.style.display    = 'inline';
+            placeholder.style.display = 'none';
+        } else {
+            img.style.display         = 'none';
+            placeholder.style.display = 'inline';
+        }
+    }
+
+    document.getElementById('home_team_id').addEventListener('change', function () {
+        updateLogo('home_team_id', 'home-logo-img', 'home-placeholder');
+    });
+
+    document.getElementById('away_team_id').addEventListener('change', function () {
+        updateLogo('away_team_id', 'away-logo-img', 'away-placeholder');
+    });
+</script>
 @endsection
