@@ -80,11 +80,17 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('simulator.*') ? 'text-warning fw-bold' : 'text-light' }}"
-                           href="{{ route('simulator.index') }}">
-                            <i class="bi bi-trophy-fill"></i> Simulador
+                        <a class="nav-link {{ request()->routeIs('compare.*') ? 'text-warning fw-bold' : 'text-light' }}"
+                        href="{{ route('compare.index') }}">
+                        <i class="bi bi-arrows-angle-expand me-1"></i> Comparador
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('simulator.*') ? 'text-warning fw-bold' : 'text-light' }}"
+                        href="{{ route('simulator.index') }}">
+                        <i class="bi bi-trophy-fill"></i> Simulador
+                    </a>
+                </li>
                 </ul>
             </div>
         </div>

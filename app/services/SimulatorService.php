@@ -4,15 +4,18 @@ namespace App\Services;
 
 use App\Models\Team;
 use App\Models\Player;
+use App\Models\PlayerStat;
 
 class SimulatorService
 {
+    // Factor de ventaja local
     private float $homeFactor = 1.06;
 
+    // Penalización por lesión según estado
     private array $injuryPenalty = [
-        'out'          => 0.0,
-        'questionable' => 0.5,
-        'day-to-day'   => 0.75,
+        'out'          => 0.0,   // No juega, aportación 0
+        'questionable' => 0.5,   // Juega al 50%
+        'day-to-day'   => 0.75,  // Juega al 75%
     ];
 
     public function simulate(Team $home, Team $away): array
@@ -26,36 +29,34 @@ class SimulatorService
         $homeInjuryReport = $this->getInjuryReport($homePlayers);
         $awayInjuryReport = $this->getInjuryReport($awayPlayers);
 
+        // Calcular probabilidades
         $total       = $homeStrength['total'] + $awayStrength['total'];
         $homeWinProb = round(($homeStrength['total'] / $total) * 100, 1);
         $awayWinProb = round(100 - $homeWinProb, 1);
 
-        // Generar parciales por cuarto
-        $quarters    = $this->generateQuarters($homeStrength, $awayStrength);
-        $homeScore   = array_sum($quarters['home']);
-        $awayScore   = array_sum($quarters['away']);
+        // Simular marcador estimado
+        $homeScore = $this->estimateScore($homePlayers, $awayPlayers);
+        $awayScore = $this->estimateScore($awayPlayers, $homePlayers);
 
-        // Asegurar que el favorito gana
+        // Ajustar para que el favorito gane si hay diferencia clara
         if ($homeWinProb > $awayWinProb && $homeScore < $awayScore) {
-            [$quarters['home'], $quarters['away']] = [$quarters['away'], $quarters['home']];
             [$homeScore, $awayScore] = [$awayScore, $homeScore];
         }
 
         return [
-            'home_team'          => $home,
-            'away_team'          => $away,
-            'home_win_prob'      => $homeWinProb,
-            'away_win_prob'      => $awayWinProb,
-            'home_score'         => $homeScore,
-            'away_score'         => $awayScore,
-            'quarters'           => $quarters,
-            'home_strength'      => $homeStrength,
-            'away_strength'      => $awayStrength,
-            'home_injury_report' => $homeInjuryReport,
-            'away_injury_report' => $awayInjuryReport,
-            'home_players'       => $homePlayers,
-            'away_players'       => $awayPlayers,
-            'winner'             => $homeWinProb >= $awayWinProb ? $home : $away,
+            'home_team'         => $home,
+            'away_team'         => $away,
+            'home_win_prob'     => $homeWinProb,
+            'away_win_prob'     => $awayWinProb,
+            'home_score'        => $homeScore,
+            'away_score'        => $awayScore,
+            'home_strength'     => $homeStrength,
+            'away_strength'     => $awayStrength,
+            'home_injury_report'=> $homeInjuryReport,
+            'away_injury_report'=> $awayInjuryReport,
+            'home_players'      => $homePlayers,
+            'away_players'      => $awayPlayers,
+            'winner'            => $homeWinProb >= $awayWinProb ? $home : $away,
         ];
     }
 
@@ -71,17 +72,22 @@ class SimulatorService
 
     private function calculateStrength(\Illuminate\Support\Collection $players, bool $isHome): array
     {
-        $offenseScore   = 0;
-        $defenseScore   = 0;
+        $offenseScore  = 0;
+        $defenseScore  = 0;
         $playmakerScore = 0;
-        $details        = [];
+        $details       = [];
 
         foreach ($players as $player) {
             $stats  = $player->currentStats;
             $factor = $this->getInjuryFactor($player);
 
-            $offense   = ($stats->pts * 1.0 + $stats->fg3_pct * 20) * $factor;
-            $defense   = ($stats->stl * 3 + $stats->blk * 3 + $stats->reb * 0.5) * $factor;
+            // Puntuación ofensiva: puntos + triples
+            $offense = ($stats->pts * 1.0 + $stats->fg3_pct * 20) * $factor;
+
+            // Puntuación defensiva: robos + tapones + rebotes
+            $defense = ($stats->stl * 3 + $stats->blk * 3 + $stats->reb * 0.5) * $factor;
+
+            // Puntuación de juego: asistencias
             $playmaker = ($stats->ast * 2) * $factor;
 
             $offenseScore   += $offense;
@@ -89,17 +95,21 @@ class SimulatorService
             $playmakerScore += $playmaker;
 
             $details[] = [
-                'player'    => $player,
-                'factor'    => $factor,
-                'offense'   => round($offense, 2),
-                'defense'   => round($defense, 2),
-                'playmaker' => round($playmaker, 2),
-                'injured'   => $player->activeInjury !== null,
+                'player'   => $player,
+                'factor'   => $factor,
+                'offense'  => round($offense, 2),
+                'defense'  => round($defense, 2),
+                'playmaker'=> round($playmaker, 2),
+                'injured'  => $player->activeInjury !== null,
             ];
         }
 
         $total = $offenseScore + $defenseScore + $playmakerScore;
-        if ($isHome) $total *= $this->homeFactor;
+
+        // Aplicar ventaja local
+        if ($isHome) {
+            $total *= $this->homeFactor;
+        }
 
         return [
             'offense'   => round($offenseScore, 2),
@@ -107,30 +117,6 @@ class SimulatorService
             'playmaker' => round($playmakerScore, 2),
             'total'     => round($total, 2),
             'details'   => $details,
-        ];
-    }
-
-    private function generateQuarters(array $homeStrength, array $awayStrength): array
-    {
-        $homeQuarters = [];
-        $awayQuarters = [];
-
-        // Base de puntos por cuarto (partido NBA = ~105-115 pts)
-        $homeBase = ($homeStrength['offense'] / 5) + rand(-3, 3);
-        $awayBase = ($awayStrength['offense'] / 5) + rand(-3, 3);
-
-        // Normalizar a rango realista (22-32 pts por cuarto)
-        $homeBase = max(22, min(32, $homeBase));
-        $awayBase = max(22, min(32, $awayBase));
-
-        for ($q = 1; $q <= 4; $q++) {
-            $homeQuarters[] = (int) round($homeBase + rand(-4, 4));
-            $awayQuarters[] = (int) round($awayBase + rand(-4, 4));
-        }
-
-        return [
-            'home' => $homeQuarters,
-            'away' => $awayQuarters,
         ];
     }
 
@@ -153,5 +139,28 @@ class SimulatorService
             }
         }
         return $report;
+    }
+
+    private function estimateScore(
+        \Illuminate\Support\Collection $teamPlayers,
+        \Illuminate\Support\Collection $oppPlayers
+    ): int {
+        $baseScore = 0;
+
+        foreach ($teamPlayers as $player) {
+            $stats   = $player->currentStats;
+            $factor  = $this->getInjuryFactor($player);
+            $baseScore += $stats->pts * $factor;
+        }
+
+        // Ajuste defensivo del rival
+        $oppDefense = $oppPlayers->sum(fn($p) =>
+            (($p->currentStats->stl ?? 0) + ($p->currentStats->blk ?? 0)) *
+            $this->getInjuryFactor($p)
+        );
+
+        $score = $baseScore - ($oppDefense * 0.5) + rand(-5, 5);
+
+        return max(85, min(140, (int) round($score)));
     }
 }

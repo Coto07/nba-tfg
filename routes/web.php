@@ -5,6 +5,7 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\InjuryController;
 use App\Http\Controllers\SimulatorController;
+use App\Http\Controllers\CompareController;
 
 Route::get('/', fn() => view('home'))->name('home');
 
@@ -24,3 +25,7 @@ Route::delete('/injuries/{injury}', [InjuryController::class, 'destroy'])->name(
 // Simulador
 Route::get('/simulator', [SimulatorController::class, 'index'])->name('simulator.index');
 Route::post('/simulator', [SimulatorController::class, 'simulate'])->name('simulator.simulate');
+
+// Comparador
+Route::get('/compare', [CompareController::class, 'index'])->name('compare.index');
+Route::post('/compare', [CompareController::class, 'compare'])->name('compare.compare');
