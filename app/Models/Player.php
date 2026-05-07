@@ -46,4 +46,16 @@ class Player extends Model
     {
         return $this->injuries()->where('active', true)->exists();
     }
+
+    public function favorites()
+{
+    return $this->morphMany(Favorite::class, 'favorable');
+}
+
+public function isFavoritedBy(?User $user): bool
+{
+    if (!$user) return false;
+    return $this->favorites()->where('user_id', $user->id)->exists();
+}
+
 }

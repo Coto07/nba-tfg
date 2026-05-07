@@ -54,4 +54,16 @@ class Team extends Model
 
         return 'https://a.espncdn.com/i/teamlogos/nba/500/' . $espnAbbr . '.png';
     }
+
+    public function favorites()
+{
+    return $this->morphMany(Favorite::class, 'favorable');
+}
+
+public function isFavoritedBy(?User $user): bool
+{
+    if (!$user) return false;
+    return $this->favorites()->where('user_id', $user->id)->exists();
+}
+
 }

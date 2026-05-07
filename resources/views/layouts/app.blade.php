@@ -73,14 +73,18 @@
                             <i class="bi bi-person-fill"></i> Jugadores
                         </a>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('rankings.*') ? 'text-warning fw-bold' : 'text-light' }}"
-                            href="{{ route('rankings.index') }}">
-                                <i class="bi bi-list-ol me-1"></i> Rankings
+                           href="{{ route('rankings.index') }}">
+                            <i class="bi bi-list-ol me-1"></i> Rankings
                         </a>
                     </li>
-
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('compare.*') ? 'text-warning fw-bold' : 'text-light' }}"
+                           href="{{ route('compare.index') }}">
+                            <i class="bi bi-arrows-angle-expand me-1"></i> Comparador
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('injuries.*') ? 'text-warning fw-bold' : 'text-light' }}"
                            href="{{ route('injuries.index') }}">
@@ -88,25 +92,57 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('compare.*') ? 'text-warning fw-bold' : 'text-light' }}"
-                        href="{{ route('compare.index') }}">
-                        <i class="bi bi-arrows-angle-expand me-1"></i> Comparador
+                        <a class="nav-link {{ request()->routeIs('simulator.*') ? 'text-warning fw-bold' : 'text-light' }}"
+                           href="{{ route('simulator.index') }}">
+                            <i class="bi bi-trophy-fill"></i> Simulador
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('simulator.*') ? 'text-warning fw-bold' : 'text-light' }}"
-                        href="{{ route('simulator.index') }}">
-                        <i class="bi bi-trophy-fill"></i> Simulador
-                    </a>
-                </li>
+                        <a class="nav-link {{ request()->routeIs('simulations.*') ? 'text-warning fw-bold' : 'text-light' }}"
+                           href="{{ route('simulations.history') }}">
+                            <i class="bi bi-clock-history me-1"></i> Historial
+                        </a>
+                    </li>
 
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('simulations.*') ? 'text-warning fw-bold' : 'text-light' }}"
-                        href="{{ route('simulations.history') }}">
-                    <i class="bi bi-clock-history me-1"></i> Historial
-                    </a>
-                </li>
-                
+                    {{-- Auth --}}
+                    @auth
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-light" href="#"
+                           data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle me-1"></i>
+                            {{ Auth::user()->name }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="{{ route('profile') }}">
+                                    <i class="bi bi-person-fill me-2"></i>Mi perfil
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                    @else
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('login') ? 'text-warning fw-bold' : 'text-light' }}"
+                           href="{{ route('login') }}">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('register') ? 'text-warning fw-bold' : 'text-light' }}"
+                           href="{{ route('register') }}">
+                            <i class="bi bi-person-plus-fill me-1"></i>Registro
+                        </a>
+                    </li>
+                    @endauth
                 </ul>
             </div>
         </div>

@@ -30,7 +30,7 @@
             </div>
             <div class="mt-2 text-secondary small">
                 @if($player->height) <span class="me-3"><i class="bi bi-rulers"></i> {{ $player->height }}</span> @endif
-                @if($player->weight) <span class="me--3"><i class="bi bi-activity"></i> {{ $player->weight }} lbs</span> @endif
+                @if($player->weight) <span class="me-3"><i class="bi bi-activity"></i> {{ $player->weight }} lbs</span> @endif
                 @if($player->college) <span class="me-3"><i class="bi bi-mortarboard-fill"></i> {{ $player->college }}</span> @endif
                 @if($player->country) <span><i class="bi bi-globe"></i> {{ $player->country }}</span> @endif
             </div>
@@ -124,9 +124,27 @@
 </div>
 @endif
 
-<a href="{{ route('players.index') }}" class="btn btn-outline-warning">
-    <i class="bi bi-arrow-left"></i> Volver a jugadores
-</a>
+{{-- Botones --}}
+<div class="d-flex gap-3 flex-wrap mt-3">
+    @auth
+    <form method="POST" action="{{ route('favorites.player', $player) }}" class="d-inline">
+        @csrf
+        <button type="submit"
+                class="btn btn-lg {{ $player->isFavoritedBy(Auth::user()) ? 'btn-warning' : 'btn-outline-warning' }}">
+            <i class="bi bi-star{{ $player->isFavoritedBy(Auth::user()) ? '-fill' : '' }} me-1"></i>
+            {{ $player->isFavoritedBy(Auth::user()) ? 'En favoritos' : 'Añadir a favoritos' }}
+        </button>
+    </form>
+    @endauth
+
+    <a href="{{ route('compare.index') }}" class="btn btn-outline-secondary btn-lg">
+        <i class="bi bi-arrows-angle-expand me-1"></i>Comparar
+    </a>
+
+    <a href="{{ route('players.index') }}" class="btn btn-outline-warning btn-lg">
+        <i class="bi bi-arrow-left"></i> Volver a jugadores
+    </a>
+</div>
 
 @endsection
 
