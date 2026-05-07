@@ -73,6 +73,14 @@
                             <i class="bi bi-person-fill"></i> Jugadores
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('rankings.*') ? 'text-warning fw-bold' : 'text-light' }}"
+                            href="{{ route('rankings.index') }}">
+                                <i class="bi bi-list-ol me-1"></i> Rankings
+                        </a>
+                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('injuries.*') ? 'text-warning fw-bold' : 'text-light' }}"
                            href="{{ route('injuries.index') }}">

@@ -6,6 +6,7 @@ use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\InjuryController;
 use App\Http\Controllers\SimulatorController;
 use App\Http\Controllers\CompareController;
+use App\Http\Controllers\RankingController;
 
 Route::get('/', fn() => view('home'))->name('home');
 
@@ -29,3 +30,6 @@ Route::post('/simulator', [SimulatorController::class, 'simulate'])->name('simul
 // Comparador
 Route::get('/compare', [CompareController::class, 'index'])->name('compare.index');
 Route::post('/compare', [CompareController::class, 'compare'])->name('compare.compare');
+
+// Rankings
+Route::get('/rankings', [RankingController::class, 'index'])->name('rankings.index');
