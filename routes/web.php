@@ -34,3 +34,9 @@ Route::post('/compare', [CompareController::class, 'compare'])->name('compare.co
 
 // Rankings
 Route::get('/rankings', [RankingController::class, 'index'])->name('rankings.index');
+
+use App\Http\Controllers\SimulationHistoryController;
+
+// Historial de simulaciones
+Route::get('/simulations', [SimulationHistoryController::class, 'index'])->name('simulations.history');
+Route::delete('/simulations/{simulation}', [SimulationHistoryController::class, 'destroy'])->name('simulations.destroy');

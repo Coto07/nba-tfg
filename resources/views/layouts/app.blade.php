@@ -99,6 +99,14 @@
                         <i class="bi bi-trophy-fill"></i> Simulador
                     </a>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('simulations.*') ? 'text-warning fw-bold' : 'text-light' }}"
+                        href="{{ route('simulations.history') }}">
+                    <i class="bi bi-clock-history me-1"></i> Historial
+                    </a>
+                </li>
+                
                 </ul>
             </div>
         </div>

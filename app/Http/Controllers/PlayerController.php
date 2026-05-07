@@ -14,11 +14,13 @@ class PlayerController extends Controller
             ->whereHas('currentStats');
 
         if ($request->filled('search')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('first_name', 'like', '%' . $request->search . '%')
-                  ->orWhere('last_name', 'like', '%' . $request->search . '%');
-            });
-        }
+    $search = $request->search;
+    $query->where(function ($q) use ($search) {
+        $q->where('first_name', 'like', '%' . $search . '%')
+          ->orWhere('last_name', 'like', '%' . $search . '%')
+          ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $search . '%']);
+    });
+}
 
         if ($request->filled('team')) {
             $query->where('team_id', $request->team);
