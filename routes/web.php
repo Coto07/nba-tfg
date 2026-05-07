@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\InjuryController;
@@ -8,7 +9,7 @@ use App\Http\Controllers\SimulatorController;
 use App\Http\Controllers\CompareController;
 use App\Http\Controllers\RankingController;
 
-Route::get('/', fn() => view('home'))->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Equipos
 Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
