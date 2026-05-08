@@ -11,6 +11,7 @@ use App\Http\Controllers\RankingController;
 use App\Http\Controllers\SimulationHistoryController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\SearchController;
 
 // Rutas públicas (sin login)
 Route::middleware('guest')->group(function () {
@@ -61,4 +62,7 @@ Route::middleware('auth')->group(function () {
     // Favoritos
     Route::post('/favorites/player/{player}', [FavoriteController::class, 'togglePlayer'])->name('favorites.player');
     Route::post('/favorites/team/{team}', [FavoriteController::class, 'toggleTeam'])->name('favorites.team');
+
+    // Buscador global
+    Route::get('/search', [SearchController::class, 'search'])->name('search');
 });

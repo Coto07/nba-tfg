@@ -40,6 +40,13 @@
         footer {
             border-top: 1px solid #2a2a4a;
         }
+        .search-result-item {
+            transition: background 0.15s;
+            border-radius: 6px;
+        }
+        .search-result-item:hover {
+            background: #2a2a4a !important;
+        }
     </style>
     @yield('styles')
 </head>
@@ -103,6 +110,24 @@
                             <i class="bi bi-clock-history me-1"></i> Historial
                         </a>
                     </li>
+
+                    {{-- Buscador global --}}
+                    @auth
+                    <li class="nav-item dropdown">
+                        <a class="nav-link text-light" href="#" id="searchDropdown"
+                           data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                            <i class="bi bi-search"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-dark dropdown-menu-end p-2"
+                             style="width:320px;" aria-labelledby="searchDropdown">
+                            <input type="text" id="global-search"
+                                   class="form-control bg-dark text-white border-secondary"
+                                   placeholder="Buscar jugador o equipo...">
+                            <div id="search-results" class="mt-2"
+                                 style="max-height:300px;overflow-y:auto;"></div>
+                        </div>
+                    </li>
+                    @endauth
 
                     {{-- Auth --}}
                     @auth
@@ -170,6 +195,76 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    @auth
+    <script>
+    document.getElementById('global-search').addEventListener('input', function () {
+        const query   = this.value.trim();
+        const results = document.getElementById('search-results');
+
+        if (query.length < 2) {
+            results.innerHTML = '';
+            return;
+        }
+
+        results.innerHTML = '<div class="text-center py-2"><div class="spinner-border spinner-border-sm text-warning"></div></div>';
+
+        fetch(`/search?q=${encodeURIComponent(query)}`)
+            .then(res => res.json())
+            .then(data => {
+                results.innerHTML = '';
+
+                if (data.players.length === 0 && data.teams.length === 0) {
+                    results.innerHTML = '<p class="text-secondary small text-center py-2 mb-0">Sin resultados</p>';
+                    return;
+                }
+
+                if (data.teams.length > 0) {
+                    results.innerHTML += `<div class="text-secondary small px-2 py-1">Equipos</div>`;
+                    data.teams.forEach(team => {
+                        results.innerHTML += `
+                            <a href="/teams/${team.id}"
+                               class="d-flex align-items-center gap-2 text-decoration-none p-2 search-result-item">
+                                <img src="${team.logo_url}"
+                                     style="width:28px;height:28px;object-fit:contain;">
+                                <div>
+                                    <div class="text-white small fw-bold">${team.full_name}</div>
+                                    <div class="text-secondary" style="font-size:0.75rem;">
+                                        ${team.conference} · ${team.division}
+                                    </div>
+                                </div>
+                            </a>`;
+                    });
+                }
+
+                if (data.players.length > 0) {
+                    results.innerHTML += `<div class="text-secondary small px-2 py-1 mt-1">Jugadores</div>`;
+                    data.players.forEach(player => {
+                        results.innerHTML += `
+                            <a href="/players/${player.id}"
+                               class="d-flex align-items-center gap-2 text-decoration-none p-2 search-result-item">
+                                <div style="width:28px;height:28px;background:#f8c200;border-radius:50%;
+                                            display:flex;align-items:center;justify-content:center;
+                                            font-weight:bold;color:#000;font-size:0.75rem;flex-shrink:0;">
+                                    ${player.first_name.charAt(0)}
+                                </div>
+                                <div>
+                                    <div class="text-white small fw-bold">${player.full_name}</div>
+                                    <div class="text-secondary" style="font-size:0.75rem;">
+                                        ${player.team ?? 'Sin equipo'} · ${player.position ?? ''}
+                                    </div>
+                                </div>
+                            </a>`;
+                    });
+                }
+            })
+            .catch(() => {
+                results.innerHTML = '<p class="text-secondary small text-center py-2 mb-0">Error al buscar</p>';
+            });
+    });
+    </script>
+    @endauth
+
     @yield('scripts')
 </body>
 </html>
