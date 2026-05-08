@@ -81,30 +81,123 @@ class AuthController extends Controller
     }
 
     public function profile()
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        $favorites = $user->favorites()
-            ->with('favorable')
-            ->get();
+    $favorites = $user->favorites()->with('favorable')->get();
 
-        $favoritePlayers = $favorites
-            ->filter(fn($f) => $f->favorable_type === 'App\\Models\\Player')
-            ->map(fn($f) => $f->favorable)
-            ->filter();
+    $favoritePlayers = $favorites
+        ->filter(fn($f) => $f->favorable_type === 'App\\Models\\Player')
+        ->map(fn($f) => $f->favorable)
+        ->filter()
+        ->load('team');
 
-        $favoriteTeams = $favorites
-            ->filter(fn($f) => $f->favorable_type === 'App\\Models\\Team')
-            ->map(fn($f) => $f->favorable)
-            ->filter();
+    $favoriteTeams = $favorites
+        ->filter(fn($f) => $f->favorable_type === 'App\\Models\\Team')
+        ->map(fn($f) => $f->favorable)
+        ->filter();
 
-        $simulations = \App\Models\Simulation::with(['homeTeam', 'awayTeam'])
-            ->orderBy('created_at', 'desc')
-            ->take(10)
-            ->get();
+    // Estadísticas del usuario
+    $totalSimulations = \App\Models\Simulation::count();
+    $totalFavorites   = $favorites->count();
 
-        return view('auth.profile', compact(
-            'user', 'favoritePlayers', 'favoriteTeams', 'simulations'
-        ));
+    // Última simulación
+    $lastSimulation = \App\Models\Simulation::with(['homeTeam', 'awayTeam'])
+        ->orderBy('created_at', 'desc')
+        ->first();
+
+    // Equipo más simulado
+    $allSims  = \App\Models\Simulation::all();
+    $teamCount = [];
+    foreach ($allSims as $sim) {
+        $teamCount[$sim->home_team_id] = ($teamCount[$sim->home_team_id] ?? 0) + 1;
+        $teamCount[$sim->away_team_id] = ($teamCount[$sim->away_team_id] ?? 0) + 1;
     }
+    arsort($teamCount);
+    $mostSimulatedTeam = !empty($teamCount)
+        ? \App\Models\Team::find(array_key_first($teamCount))
+        : null;
+
+    // Últimas 5 simulaciones
+    $recentSimulations = \App\Models\Simulation::with(['homeTeam', 'awayTeam'])
+        ->orderBy('created_at', 'desc')
+        ->take(5)
+        ->get();
+
+    return view('auth.profile', compact(
+        'user',
+        'favoritePlayers',
+        'favoriteTeams',
+        'totalSimulations',
+        'totalFavorites',
+        'lastSimulation',
+        'mostSimulatedTeam',
+        'recentSimulations'
+    ));
+
+}
+
+public function updatePassword(Request $request)
+{
+    $request->validate([
+        'current_password' => 'required',
+        'password'         => 'required|min:6|confirmed',
+    ], [
+        'current_password.required' => 'La contraseña actual es obligatoria.',
+        'password.required'         => 'La nueva contraseña es obligatoria.',
+        'password.min'              => 'La contraseña debe tener al menos 6 caracteres.',
+        'password.confirmed'        => 'Las contraseñas no coinciden.',
+    ]);
+
+    $user = Auth::user();
+
+    if (!Hash::check($request->current_password, $user->password)) {
+        return back()->withErrors(['current_password' => 'La contraseña actual no es correcta.']);
+    }
+
+    $user->update([
+        'password' => Hash::make($request->password)
+    ]);
+
+    return back()->with('success', 'Contraseña actualizada correctamente.');
+}
+
+public function updateProfile(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|min:3|max:50',
+    ], [
+        'name.required' => 'El nombre es obligatorio.',
+        'name.min'      => 'El nombre debe tener al menos 3 caracteres.',
+    ]);
+
+    Auth::user()->update([
+        'name' => $request->name,
+    ]);
+
+    return back()->with('success', 'Perfil actualizado correctamente.');
+}
+
+public function deleteAccount(Request $request)
+{
+    $request->validate([
+        'password' => 'required',
+    ], [
+        'password.required' => 'Debes confirmar tu contraseña para eliminar la cuenta.',
+    ]);
+
+    $user = Auth::user();
+
+    if (!Hash::check($request->password, $user->password)) {
+        return back()->withErrors(['password' => 'La contraseña no es correcta.']);
+    }
+
+    Auth::logout();
+    $user->delete();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect()->route('login')
+        ->with('success', 'Tu cuenta ha sido eliminada correctamente.');
+}
 }

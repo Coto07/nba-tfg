@@ -58,6 +58,9 @@ Route::middleware('auth')->group(function () {
     // Perfil y logout
     Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::put('/profile/password', [AuthController::class, 'updatePassword'])->name('profile.password');
+    Route::put('/profile/update', [AuthController::class, 'updateProfile'])->name('profile.update');
+    Route::delete('/profile/delete', [AuthController::class, 'deleteAccount'])->name('profile.delete');
 
     // Favoritos
     Route::post('/favorites/player/{player}', [FavoriteController::class, 'togglePlayer'])->name('favorites.player');
