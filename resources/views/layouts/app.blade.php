@@ -174,6 +174,43 @@
     </nav>
 
     <main class="container py-4">
+        {{-- BANNER DE LESIONES ACTIVAS --}}
+    @if(isset($globalInjuries) && $globalInjuries->count() > 0)
+<div class="mb-3">
+    <div class="d-flex align-items-center gap-2 p-3 rounded"
+         style="background:#1a0a0a;border:1px solid #dc3545;border-radius:10px;">
+        <i class="bi bi-bandaid-fill text-danger fs-5 flex-shrink-0"></i>
+        <div class="flex-fill">
+            <span class="text-danger fw-bold small me-2">
+                {{ $globalInjuries->count() }} lesión{{ $globalInjuries->count() > 1 ? 'es' : '' }} activa{{ $globalInjuries->count() > 1 ? 's' : '' }}:
+            </span>
+            @foreach($globalInjuries->take(4) as $injury)
+                <span class="badge bg-dark border border-danger me-1 mb-1">
+                    @if($injury->player->team)
+                        <img src="{{ $injury->player->team->logo_url }}"
+                             style="width:14px;height:14px;object-fit:contain;" class="me-1">
+                    @endif
+                    {{ $injury->player->full_name }}
+                    — {!! $injury->status_badge !!}
+                </span>
+            @endforeach
+            @if($globalInjuries->count() > 4)
+                <span class="text-secondary small">
+                    +{{ $globalInjuries->count() - 4 }} más
+                </span>
+            @endif
+        </div>
+        <a href="{{ route('injuries.index') }}"
+           class="btn btn-outline-danger btn-sm flex-shrink-0">
+            Ver todas
+        </a>
+        <button type="button"
+                class="btn-close btn-close-white flex-shrink-0"
+                onclick="this.closest('.mb-3').style.display='none'">
+        </button>
+    </div>
+</div>
+@endif
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show">
                 <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}

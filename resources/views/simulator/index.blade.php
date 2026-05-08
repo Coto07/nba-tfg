@@ -90,6 +90,38 @@
             </form>
         </div>
 
+        {{-- AVISO DE LESIONES EN EL SIMULADOR --}}
+        @if(isset($globalInjuries) && $globalInjuries->count() > 0)
+        <div class="card p-3 mb-4" style="border-left: 3px solid #dc3545;">
+            <h6 class="text-danger mb-2">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                Jugadores lesionados que afectan a la simulación
+            </h6>
+            <div class="row g-2">
+                @foreach($globalInjuries as $injury)
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center gap-2 p-2 rounded"
+                         style="background:#0d0d0d;">
+                        @if($injury->player->team)
+                            <img src="{{ $injury->player->team->logo_url }}"
+                                 style="width:24px;height:24px;object-fit:contain;">
+                        @endif
+                        <div class="flex-fill">
+                            <div class="text-white small fw-bold">
+                                {{ $injury->player->full_name }}
+                            </div>
+                            <div class="text-secondary" style="font-size:0.75rem;">
+                                {{ $injury->description }}
+                            </div>
+                        </div>
+                        {!! $injury->status_badge !!}
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         {{-- Simulaciones recientes --}}
         @if($recentSimulations->count() > 0)
         <h5 class="text-warning mb-3">
@@ -140,9 +172,9 @@
         const logo        = option.getAttribute('data-logo');
 
         if (logo && select.value !== '') {
-            img.src              = logo;
-            img.alt              = option.text;
-            img.style.display    = 'inline';
+            img.src                   = logo;
+            img.alt                   = option.text;
+            img.style.display         = 'inline';
             placeholder.style.display = 'none';
         } else {
             img.style.display         = 'none';
