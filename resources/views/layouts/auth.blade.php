@@ -12,13 +12,14 @@
         body {
             min-height: 100vh;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             margin: 0;
             font-family: Arial, sans-serif;
             position: relative;
-            overflow: hidden;
-        }
+            overflow-y: auto;
+            padding: 30px 0;
+}
 
         /* Imagen de fondo */
         .bg-image {
@@ -158,18 +159,6 @@
             font-size: 0.85rem;
         }
 
-        /* Stats decorativos en el fondo */
-        .bg-stats {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 2;
-            display: flex;
-            gap: 40px;
-            opacity: 0.6;
-        }
-
         .bg-stat {
             text-align: center;
             color: #fff;
@@ -223,22 +212,6 @@
             @yield('content')
         </div>
 
-    </div>
-
-    {{-- Stats decorativos en la parte inferior --}}
-    <div class="bg-stats d-none d-md-flex">
-        <div class="bg-stat">
-            <div class="bg-stat-number">30</div>
-            <div class="bg-stat-label">Equipos NBA</div>
-        </div>
-        <div class="bg-stat">
-            <div class="bg-stat-number">200+</div>
-            <div class="bg-stat-label">Jugadores</div>
-        </div>
-        <div class="bg-stat">
-            <div class="bg-stat-number">∞</div>
-            <div class="bg-stat-label">Simulaciones</div>
-        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

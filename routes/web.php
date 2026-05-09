@@ -45,6 +45,8 @@ Route::middleware('auth')->group(function () {
     // Lesiones
     Route::get('/injuries', [InjuryController::class, 'index'])->name('injuries.index');
     Route::post('/injuries', [InjuryController::class, 'store'])->name('injuries.store');
+    Route::get('/injuries/{injury}/edit', [InjuryController::class, 'edit'])->name('injuries.edit');
+    Route::put('/injuries/{injury}', [InjuryController::class, 'update'])->name('injuries.update');
     Route::delete('/injuries/{injury}', [InjuryController::class, 'destroy'])->name('injuries.destroy');
 
     // Simulador

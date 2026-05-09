@@ -139,15 +139,23 @@
                             </div>
                         </div>
                     </div>
-                    <form method="POST"
-                          action="{{ route('injuries.destroy', $injury) }}"
-                          onsubmit="return confirm('¿Marcar como recuperado?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-outline-success btn-sm">
-                            <i class="bi bi-check-circle-fill me-1"></i>Recuperado
-                        </button>
-                    </form>
+
+                    {{-- Botones editar y recuperado --}}
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('injuries.edit', $injury) }}"
+                           class="btn btn-outline-warning btn-sm">
+                            <i class="bi bi-pencil-fill me-1"></i>Editar
+                        </a>
+                        <form method="POST"
+                              action="{{ route('injuries.destroy', $injury) }}"
+                              onsubmit="return confirm('¿Marcar como recuperado?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-outline-success btn-sm">
+                                <i class="bi bi-check-circle-fill me-1"></i>Recuperado
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
             @endforeach
