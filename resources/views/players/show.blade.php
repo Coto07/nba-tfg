@@ -144,6 +144,21 @@
         <i class="bi bi-arrows-angle-expand me-1"></i>Comparar
     </a>
 
+    @auth
+<form method="POST" action="{{ route('players.destroy', $player) }}"
+      class="d-inline"
+      onsubmit="return confirm('¿Eliminar este jugador?')">
+    @csrf
+    @method('DELETE')
+    <button type="submit" class="btn btn-outline-danger btn-lg">
+        <i class="bi bi-trash-fill me-1"></i>Eliminar
+    </button>
+</form>
+<a href="{{ route('players.edit', $player) }}" class="btn btn-outline-warning btn-lg">
+    <i class="bi bi-pencil-fill me-1"></i>Editar
+</a>
+@endauth
+
     <a href="{{ route('players.index') }}" class="btn btn-outline-warning btn-lg">
         <i class="bi bi-arrow-left"></i> Volver a jugadores
     </a>

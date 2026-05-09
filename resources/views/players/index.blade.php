@@ -34,15 +34,19 @@
 @endsection
 
 @section('content')
+
 {{-- HERO JUGADORES --}}
 <div class="page-hero text-center mb-5">
     <div class="page-hero-overlay">
         <h1 class="display-5 fw-bold text-warning mb-2">
             <i class="bi bi-person-fill me-2"></i>Jugadores NBA
         </h1>
-        <p class="text-white mb-0">
+        <p class="text-white mb-2">
             {{ $players->count() }} jugadores con estadísticas de la temporada 2023-24
         </p>
+        <a href="{{ route('players.create') }}" class="btn btn-nba btn-sm mt-2">
+            <i class="bi bi-person-plus-fill me-2"></i>Nuevo jugador
+        </a>
     </div>
 </div>
 
@@ -91,32 +95,33 @@
 <div class="table-responsive">
     <table class="table table-dark table-hover align-middle">
         <thead class="text-warning">
-    <tr>
-        <th>#</th>
-        <th>Jugador</th>
-        <th>Equipo</th>
-        <th>Pos</th>
-        <th class="text-center"
-            data-bs-toggle="tooltip"
-            title="Puntos por partido">PTS</th>
-        <th class="text-center"
-            data-bs-toggle="tooltip"
-            title="Rebotes por partido">REB</th>
-        <th class="text-center"
-            data-bs-toggle="tooltip"
-            title="Asistencias por partido">AST</th>
-        <th class="text-center"
-            data-bs-toggle="tooltip"
-            title="Robos por partido">STL</th>
-        <th class="text-center"
-            data-bs-toggle="tooltip"
-            title="Tapones por partido">BLK</th>
-        <th class="text-center"
-            data-bs-toggle="tooltip"
-            title="Porcentaje de tiros de campo">FG%</th>
-        <th class="text-center">Estado</th>
-    </tr>
-</thead>
+            <tr>
+                <th>#</th>
+                <th>Jugador</th>
+                <th>Equipo</th>
+                <th>Pos</th>
+                <th class="text-center"
+                    data-bs-toggle="tooltip"
+                    title="Puntos por partido">PTS</th>
+                <th class="text-center"
+                    data-bs-toggle="tooltip"
+                    title="Rebotes por partido">REB</th>
+                <th class="text-center"
+                    data-bs-toggle="tooltip"
+                    title="Asistencias por partido">AST</th>
+                <th class="text-center"
+                    data-bs-toggle="tooltip"
+                    title="Robos por partido">STL</th>
+                <th class="text-center"
+                    data-bs-toggle="tooltip"
+                    title="Tapones por partido">BLK</th>
+                <th class="text-center"
+                    data-bs-toggle="tooltip"
+                    title="Porcentaje de tiros de campo">FG%</th>
+                <th class="text-center">Estado</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
         <tbody>
             @foreach($players as $i => $player)
             <tr>
@@ -153,6 +158,21 @@
                         <span class="badge bg-success">Sano</span>
                     @endif
                 </td>
+                <td class="text-center">
+                    <a href="{{ route('players.edit', $player) }}"
+                       class="btn btn-outline-warning btn-sm">
+                        <i class="bi bi-pencil-fill"></i>
+                    </a>
+                    <form method="POST" action="{{ route('players.destroy', $player) }}"
+                          class="d-inline"
+                          onsubmit="return confirm('¿Eliminar a {{ $player->full_name }}?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                    </form>
+                </td>
             </tr>
             @endforeach
         </tbody>
@@ -165,4 +185,5 @@
     <a href="{{ route('players.index') }}" class="btn btn-outline-warning">Ver todos</a>
 </div>
 @endif
+
 @endsection

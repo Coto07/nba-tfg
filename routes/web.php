@@ -30,10 +30,17 @@ Route::middleware('auth')->group(function () {
     // Equipos
     Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
     Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
+    Route::get('/teams/{team}/edit', [TeamController::class, 'edit'])->name('teams.edit');
+    Route::put('/teams/{team}', [TeamController::class, 'update'])->name('teams.update');
 
     // Jugadores
     Route::get('/players', [PlayerController::class, 'index'])->name('players.index');
+    Route::get('/players/create', [PlayerController::class, 'create'])->name('players.create');
+    Route::post('/players', [PlayerController::class, 'store'])->name('players.store');
     Route::get('/players/{player}', [PlayerController::class, 'show'])->name('players.show');
+    Route::get('/players/{player}/edit', [PlayerController::class, 'edit'])->name('players.edit');
+    Route::put('/players/{player}', [PlayerController::class, 'update'])->name('players.update');
+    Route::delete('/players/{player}', [PlayerController::class, 'destroy'])->name('players.destroy');
 
     // Lesiones
     Route::get('/injuries', [InjuryController::class, 'index'])->name('injuries.index');

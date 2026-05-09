@@ -68,6 +68,9 @@
                         {{ $team->isFavoritedBy(Auth::user()) ? 'Favorito' : 'Añadir a favoritos' }}
                     </button>
                 </form>
+                <a href="{{ route('teams.edit', $team) }}" class="btn btn-outline-warning btn-sm">
+                    <i class="bi bi-pencil-fill me-1"></i>Editar equipo
+                </a>
                 @endauth
             </div>
         </div>
@@ -195,30 +198,30 @@
 <div class="table-responsive mb-4">
     <table class="table table-dark table-hover align-middle">
         <thead class="text-warning">
-    <tr>
-        <th>Jugador</th>
-        <th>Pos</th>
-        <th class="text-center"
-            data-bs-toggle="tooltip"
-            title="Puntos por partido">PTS</th>
-        <th class="text-center"
-            data-bs-toggle="tooltip"
-            title="Rebotes por partido">REB</th>
-        <th class="text-center"
-            data-bs-toggle="tooltip"
-            title="Asistencias por partido">AST</th>
-        <th class="text-center"
-            data-bs-toggle="tooltip"
-            title="Robos por partido">STL</th>
-        <th class="text-center"
-            data-bs-toggle="tooltip"
-            title="Tapones por partido">BLK</th>
-        <th class="text-center"
-            data-bs-toggle="tooltip"
-            title="Porcentaje de tiros de campo">FG%</th>
-        <th class="text-center">Estado</th>
-    </tr>
-</thead>
+            <tr>
+                <th>Jugador</th>
+                <th>Pos</th>
+                <th class="text-center"
+                    data-bs-toggle="tooltip"
+                    title="Puntos por partido">PTS</th>
+                <th class="text-center"
+                    data-bs-toggle="tooltip"
+                    title="Rebotes por partido">REB</th>
+                <th class="text-center"
+                    data-bs-toggle="tooltip"
+                    title="Asistencias por partido">AST</th>
+                <th class="text-center"
+                    data-bs-toggle="tooltip"
+                    title="Robos por partido">STL</th>
+                <th class="text-center"
+                    data-bs-toggle="tooltip"
+                    title="Tapones por partido">BLK</th>
+                <th class="text-center"
+                    data-bs-toggle="tooltip"
+                    title="Porcentaje de tiros de campo">FG%</th>
+                <th class="text-center">Estado</th>
+            </tr>
+        </thead>
         <tbody>
             @foreach($players as $player)
             <tr>
