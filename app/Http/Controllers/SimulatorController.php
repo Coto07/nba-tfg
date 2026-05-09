@@ -6,6 +6,7 @@ use App\Models\Team;
 use App\Models\Simulation;
 use App\Services\SimulatorService;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SimulatorController extends Controller
 {
@@ -41,19 +42,35 @@ class SimulatorController extends Controller
         $result = $simulator->simulate($home, $away);
 
         // Guardar simulación en BD
-        Simulation::create([
-            'home_team_id'        => $home->id,
-            'away_team_id'        => $away->id,
-            'home_score'          => $result['home_score'],
-            'away_score'          => $result['away_score'],
-            'home_win_probability'=> $result['home_win_prob'],
-            'away_win_probability'=> $result['away_win_prob'],
-            'result_details'      => [
+        $simulation = Simulation::create([
+            'home_team_id'         => $home->id,
+            'away_team_id'         => $away->id,
+            'home_score'           => $result['home_score'],
+            'away_score'           => $result['away_score'],
+            'home_win_probability' => $result['home_win_prob'],
+            'away_win_probability' => $result['away_win_prob'],
+            'result_details'       => [
                 'home_strength' => $result['home_strength'],
                 'away_strength' => $result['away_strength'],
+                'quarters'      => $result['quarters'],
             ],
         ]);
 
-        return view('simulator.result', compact('result'));
+        return view('simulator.result', compact('result', 'simulation'));
+    }
+
+    public function exportPdf(Simulation $simulation)
+    {
+        $simulation->load(['homeTeam', 'awayTeam']);
+
+        $pdf = Pdf::loadView('simulator.pdf', compact('simulation'))
+            ->setPaper('a4', 'portrait');
+
+        $filename = 'simulacion-' .
+            $simulation->homeTeam->abbreviation . '-vs-' .
+            $simulation->awayTeam->abbreviation . '-' .
+            $simulation->created_at->format('Y-m-d') . '.pdf';
+
+        return $pdf->download($filename);
     }
 }

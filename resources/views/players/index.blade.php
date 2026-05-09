@@ -2,12 +2,48 @@
 
 @section('title', 'Jugadores - NBA Simulator')
 
+@section('styles')
+<style>
+    .page-hero {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        background-image: url('https://images.unsplash.com/photo-1608245449230-4ac19066d2d0?w=1920&q=80');
+        background-size: cover;
+        background-position: center top;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .page-hero-overlay {
+        position: relative;
+        z-index: 2;
+        padding: 50px 20px;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.25);
+    }
+    .page-hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(13,13,13,0.1) 0%, rgba(26,26,46,0.1) 100%);
+        z-index: 1;
+    }
+</style>
+@endsection
+
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-warning fw-bold mb-0">
-        <i class="bi bi-person-fill me-2"></i>Jugadores NBA
-    </h2>
-    <span class="badge bg-secondary fs-6">{{ $players->count() }} jugadores</span>
+{{-- HERO JUGADORES --}}
+<div class="page-hero text-center mb-5">
+    <div class="page-hero-overlay">
+        <h1 class="display-5 fw-bold text-warning mb-2">
+            <i class="bi bi-person-fill me-2"></i>Jugadores NBA
+        </h1>
+        <p class="text-white mb-0">
+            {{ $players->count() }} jugadores con estadísticas de la temporada 2023-24
+        </p>
+    </div>
 </div>
 
 {{-- Filtros --}}
@@ -55,20 +91,32 @@
 <div class="table-responsive">
     <table class="table table-dark table-hover align-middle">
         <thead class="text-warning">
-            <tr>
-                <th>#</th>
-                <th>Jugador</th>
-                <th>Equipo</th>
-                <th>Pos</th>
-                <th class="text-center">PTS</th>
-                <th class="text-center">REB</th>
-                <th class="text-center">AST</th>
-                <th class="text-center">STL</th>
-                <th class="text-center">BLK</th>
-                <th class="text-center">FG%</th>
-                <th class="text-center">Estado</th>
-            </tr>
-        </thead>
+    <tr>
+        <th>#</th>
+        <th>Jugador</th>
+        <th>Equipo</th>
+        <th>Pos</th>
+        <th class="text-center"
+            data-bs-toggle="tooltip"
+            title="Puntos por partido">PTS</th>
+        <th class="text-center"
+            data-bs-toggle="tooltip"
+            title="Rebotes por partido">REB</th>
+        <th class="text-center"
+            data-bs-toggle="tooltip"
+            title="Asistencias por partido">AST</th>
+        <th class="text-center"
+            data-bs-toggle="tooltip"
+            title="Robos por partido">STL</th>
+        <th class="text-center"
+            data-bs-toggle="tooltip"
+            title="Tapones por partido">BLK</th>
+        <th class="text-center"
+            data-bs-toggle="tooltip"
+            title="Porcentaje de tiros de campo">FG%</th>
+        <th class="text-center">Estado</th>
+    </tr>
+</thead>
         <tbody>
             @foreach($players as $i => $player)
             <tr>

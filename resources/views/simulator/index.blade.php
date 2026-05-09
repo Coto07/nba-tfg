@@ -2,13 +2,49 @@
 
 @section('title', 'Simulador - NBA Simulator')
 
+@section('styles')
+<style>
+    .page-hero {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        background-image: url('https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .page-hero-overlay {
+        position: relative;
+        z-index: 2;
+        padding: 50px 20px;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.35);
+    }
+    .page-hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(13,13,13,0.3) 0%, rgba(26,26,46,0.3) 100%);
+        z-index: 1;
+    }
+</style>
+@endsection
+
 @section('content')
 
-<div class="text-center mb-5">
-    <h2 class="text-warning fw-bold">
-        <i class="bi bi-trophy-fill me-2"></i>Simulador de Partidos
-    </h2>
-    <p class="text-secondary">Selecciona dos equipos y simula el resultado basado en estadísticas reales.</p>
+{{-- HERO SIMULADOR --}}
+<div class="page-hero text-center mb-5">
+    <div class="page-hero-overlay">
+        <h1 class="display-5 fw-bold text-warning mb-2">
+            <i class="bi bi-trophy-fill me-2"></i>Simulador de Partidos
+        </h1>
+        <p class="text-white mb-0">
+            Selecciona dos equipos y simula el resultado basado en estadísticas reales
+        </p>
+    </div>
 </div>
 
 <div class="row justify-content-center">

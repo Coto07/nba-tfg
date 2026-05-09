@@ -65,24 +65,64 @@
         padding-left: 10px;
         margin-bottom: 16px;
     }
+
+    .hero-section {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background-image: url('https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=1920&q=80');
+    background-size: cover;
+    background-position: center top;
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-overlay {
+    position: relative;
+    z-index: 2;
+    padding: 60px 20px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(13, 13, 13, 0.3) 0%,
+        rgba(26, 26, 46, 0.3) 100%
+    );
+    z-index: 1;
+}
 </style>
 @endsection
 
 @section('content')
 
-{{-- HERO --}}
-<div class="text-center py-4 mb-5">
-    <h1 class="display-4 fw-bold text-warning">🏀 NBA Simulator</h1>
-    <p class="lead text-secondary mt-2">
-        Estadísticas reales · Simulación de partidos · Análisis de lesiones
-    </p>
+{{-- HERO CON IMAGEN DE FONDO --}}
+<div class="hero-section text-center mb-5">
+    <div class="hero-overlay">
+        <h1 class="display-3 fw-bold text-warning mb-3">🏀 NBA Simulator</h1>
+        <p class="lead text-white mb-4">
+            Estadísticas reales · Simulación de partidos · Análisis de lesiones
+        </p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{{ route('simulator.index') }}" class="btn btn-nba btn-lg">
+                <i class="bi bi-play-fill me-2"></i>Simular partido
+            </a>
+        </div>
+    </div>
 </div>
 
-{{-- ESTADÍSTICAS GLOBALES --}}
+{{-- ESTADÍSTICAS GLOBALES CON ANIMACIÓN --}}
 <div class="row g-3 mb-5">
     <div class="col-6 col-md-3">
         <div class="stat-card p-4 text-center">
-            <div class="stat-number">{{ $totalTeams }}</div>
+            <div class="stat-number counter" data-target="{{ $totalTeams }}">0</div>
             <div class="text-secondary small mt-1">
                 <i class="bi bi-shield-fill text-warning me-1"></i>Equipos
             </div>
@@ -90,7 +130,7 @@
     </div>
     <div class="col-6 col-md-3">
         <div class="stat-card p-4 text-center">
-            <div class="stat-number">{{ $totalPlayers }}</div>
+            <div class="stat-number counter" data-target="{{ $totalPlayers }}">0</div>
             <div class="text-secondary small mt-1">
                 <i class="bi bi-person-fill text-warning me-1"></i>Jugadores
             </div>
@@ -98,7 +138,7 @@
     </div>
     <div class="col-6 col-md-3">
         <div class="stat-card p-4 text-center">
-            <div class="stat-number">{{ $totalSimulations }}</div>
+            <div class="stat-number counter" data-target="{{ $totalSimulations }}">0</div>
             <div class="text-secondary small mt-1">
                 <i class="bi bi-trophy-fill text-warning me-1"></i>Simulaciones
             </div>
@@ -106,17 +146,14 @@
     </div>
     <div class="col-6 col-md-3">
         <div class="stat-card p-4 text-center">
-            <div class="stat-number {{ $totalInjuries > 0 ? 'text-danger' : 'text-success' }}">
-                {{ $totalInjuries }}
-            </div>
+            <div class="stat-number counter {{ $totalInjuries > 0 ? 'text-danger' : 'text-success' }}"
+                 data-target="{{ $totalInjuries }}">0</div>
             <div class="text-secondary small mt-1">
                 <i class="bi bi-bandaid-fill text-warning me-1"></i>Lesiones activas
             </div>
         </div>
     </div>
 </div>
-
-
 
 {{-- TOPS Y ACTIVIDAD RECIENTE --}}
 <div class="row g-4 mb-4">
@@ -303,4 +340,40 @@
     </div>
 </div>
 
+@endsection
+
+@section('scripts')
+<script>
+    // Animación de contadores al cargar la página
+    function animateCounter(element) {
+        const target   = parseInt(element.getAttribute('data-target'));
+        const duration = 1500; // milisegundos
+        const step     = target / (duration / 16);
+        let current    = 0;
+
+        const timer = setInterval(() => {
+            current += step;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            element.textContent = Math.floor(current);
+        }, 16);
+    }
+
+    // Usar IntersectionObserver para animar cuando sean visibles
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounter(entry.target);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    // Observar todos los contadores
+    document.querySelectorAll('.counter').forEach(counter => {
+        observer.observe(counter);
+    });
+</script>
 @endsection

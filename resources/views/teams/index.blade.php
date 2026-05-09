@@ -2,12 +2,54 @@
 
 @section('title', 'Equipos - NBA Simulator')
 
+@section('styles')
+<style>
+    .page-hero {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        background-image: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .page-hero-overlay {
+        position: relative;
+        z-index: 2;
+        padding: 50px 20px;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.45);
+    }
+    .page-hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(13,13,13,0.3) 0%, rgba(26,26,46,0.3) 100%);
+        z-index: 1;
+    }
+    .team-card {
+        transition: transform 0.2s, border-color 0.2s;
+        cursor: pointer;
+    }
+    .team-card:hover {
+        transform: translateY(-4px);
+        border-color: #f8c200 !important;
+    }
+</style>
+@endsection
+
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="text-warning fw-bold mb-0">
-        <i class="bi bi-shield-fill me-2"></i>Equipos NBA
-    </h2>
-    <span class="badge bg-secondary fs-6">{{ $teams->count() }} equipos</span>
+{{-- HERO EQUIPOS --}}
+<div class="page-hero text-center mb-5">
+    <div class="page-hero-overlay">
+        <h1 class="display-5 fw-bold text-warning mb-2">
+            <i class="bi bi-shield-fill me-2"></i>Equipos NBA
+        </h1>
+        <p class="text-white mb-0">Los 30 equipos de la mejor liga de baloncesto del mundo</p>
+    </div>
 </div>
 
 {{-- Filtros --}}

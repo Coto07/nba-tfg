@@ -8,41 +8,76 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         * { box-sizing: border-box; }
+
         body {
-            background-color: #0d0d0d;
-            color: #f0f0f0;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0;
+            font-family: Arial, sans-serif;
+            position: relative;
+            overflow: hidden;
         }
+
+        /* Imagen de fondo */
+        .bg-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+        }
+
+        /* Overlay oscuro encima de la imagen */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 1;
+        }
+
         .auth-container {
+            position: relative;
+            z-index: 2;
             width: 100%;
             max-width: 440px;
             padding: 20px;
         }
+
         .auth-card {
-            background: #1a1a2e;
+            background: rgba(26, 26, 46, 0.95);
             border: 1px solid #2a2a4a;
             border-radius: 16px;
             padding: 40px;
+            backdrop-filter: blur(10px);
         }
+
         .auth-logo {
             text-align: center;
             margin-bottom: 32px;
         }
+
         .auth-logo h1 {
             font-size: 2rem;
             font-weight: bold;
             color: #f8c200;
             margin-bottom: 4px;
         }
+
         .auth-logo p {
             color: #6c757d;
             font-size: 0.9rem;
             margin: 0;
         }
+
         .form-control {
             background-color: #0d0d0d !important;
             border-color: #2a2a4a !important;
@@ -50,16 +85,20 @@
             padding: 12px 16px;
             border-radius: 8px;
         }
+
         .form-control:focus {
             border-color: #f8c200 !important;
             box-shadow: 0 0 0 0.2rem rgba(248, 194, 0, 0.15) !important;
         }
+
         .form-control::placeholder { color: #555 !important; }
+
         .form-label {
             color: #aaa;
             font-size: 0.85rem;
             margin-bottom: 6px;
         }
+
         .btn-nba {
             background-color: #f8c200;
             color: #000;
@@ -69,11 +108,14 @@
             border-radius: 8px;
             font-size: 1rem;
             transition: background 0.2s;
+            width: 100%;
         }
+
         .btn-nba:hover {
             background-color: #e0a800;
             color: #000;
         }
+
         .divider {
             text-align: center;
             color: #555;
@@ -81,6 +123,7 @@
             margin: 20px 0;
             position: relative;
         }
+
         .divider::before, .divider::after {
             content: '';
             position: absolute;
@@ -89,28 +132,70 @@
             height: 1px;
             background: #2a2a4a;
         }
+
         .divider::before { left: 0; }
-        .divider::after { right: 0; }
+        .divider::after  { right: 0; }
+
         .auth-footer {
             text-align: center;
             margin-top: 24px;
             color: #6c757d;
             font-size: 0.85rem;
         }
+
         .auth-footer a {
             color: #f8c200;
             text-decoration: none;
             font-weight: bold;
         }
+
         .auth-footer a:hover { text-decoration: underline; }
+
         .invalid-feedback { font-size: 0.8rem; }
+
         .alert {
             border-radius: 8px;
             font-size: 0.85rem;
         }
+
+        /* Stats decorativos en el fondo */
+        .bg-stats {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            display: flex;
+            gap: 40px;
+            opacity: 0.6;
+        }
+
+        .bg-stat {
+            text-align: center;
+            color: #fff;
+        }
+
+        .bg-stat-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #f8c200;
+            line-height: 1;
+        }
+
+        .bg-stat-label {
+            font-size: 0.75rem;
+            color: #aaa;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
+
+    {{-- Imagen de fondo --}}
+    <div class="bg-image"></div>
+    <div class="bg-overlay"></div>
+
+    {{-- Contenido del formulario --}}
     <div class="auth-container">
 
         {{-- Logo --}}
@@ -139,6 +224,23 @@
         </div>
 
     </div>
+
+    {{-- Stats decorativos en la parte inferior --}}
+    <div class="bg-stats d-none d-md-flex">
+        <div class="bg-stat">
+            <div class="bg-stat-number">30</div>
+            <div class="bg-stat-label">Equipos NBA</div>
+        </div>
+        <div class="bg-stat">
+            <div class="bg-stat-number">200+</div>
+            <div class="bg-stat-label">Jugadores</div>
+        </div>
+        <div class="bg-stat">
+            <div class="bg-stat-number">∞</div>
+            <div class="bg-stat-label">Simulaciones</div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

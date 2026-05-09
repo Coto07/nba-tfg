@@ -44,20 +44,23 @@
 
 <div class="row g-3 mb-4">
     @foreach([
-        ['label' => 'Puntos', 'value' => $stats->pts, 'icon' => 'bi-star-fill', 'color' => 'warning'],
-        ['label' => 'Rebotes', 'value' => $stats->reb, 'icon' => 'bi-arrow-up-circle-fill', 'color' => 'info'],
-        ['label' => 'Asistencias', 'value' => $stats->ast, 'icon' => 'bi-people-fill', 'color' => 'success'],
-        ['label' => 'Robos', 'value' => $stats->stl, 'icon' => 'bi-hand-index-fill', 'color' => 'primary'],
-        ['label' => 'Tapones', 'value' => $stats->blk, 'icon' => 'bi-shield-fill', 'color' => 'danger'],
-        ['label' => 'Minutos', 'value' => $stats->min, 'icon' => 'bi-clock-fill', 'color' => 'secondary'],
-    ] as $stat)
+    ['label' => 'Puntos', 'value' => $stats->pts, 'icon' => 'bi-star-fill', 'color' => 'warning', 'tip' => 'Promedio de puntos anotados por partido'],
+    ['label' => 'Rebotes', 'value' => $stats->reb, 'icon' => 'bi-arrow-up-circle-fill', 'color' => 'info', 'tip' => 'Promedio de rebotes capturados por partido'],
+    ['label' => 'Asistencias', 'value' => $stats->ast, 'icon' => 'bi-people-fill', 'color' => 'success', 'tip' => 'Promedio de asistencias por partido'],
+    ['label' => 'Robos', 'value' => $stats->stl, 'icon' => 'bi-hand-index-fill', 'color' => 'primary', 'tip' => 'Promedio de robos de balón por partido'],
+    ['label' => 'Tapones', 'value' => $stats->blk, 'icon' => 'bi-shield-fill', 'color' => 'danger', 'tip' => 'Promedio de tapones por partido'],
+    ['label' => 'Minutos', 'value' => $stats->min, 'icon' => 'bi-clock-fill', 'color' => 'secondary', 'tip' => 'Promedio de minutos jugados por partido'],
+] as $stat)
     <div class="col-6 col-md-4 col-lg-2">
-        <div class="card text-center p-3">
-            <i class="bi {{ $stat['icon'] }} fs-3 text-{{ $stat['color'] }}"></i>
-            <div class="fs-3 fw-bold text-white mt-1">{{ $stat['value'] }}</div>
-            <div class="text-secondary small">{{ $stat['label'] }}</div>
-        </div>
+    <div class="card text-center p-3"
+         data-bs-toggle="tooltip"
+         data-bs-placement="top"
+         title="{{ $stat['tip'] }}">
+        <i class="bi {{ $stat['icon'] }} fs-3 text-{{ $stat['color'] }}"></i>
+        <div class="fs-3 fw-bold text-white mt-1">{{ $stat['value'] }}</div>
+        <div class="text-secondary small">{{ $stat['label'] }}</div>
     </div>
+</div>
     @endforeach
 </div>
 

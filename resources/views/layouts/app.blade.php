@@ -233,6 +233,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <script>
+    // Activar tooltips de Bootstrap en toda la app
+    document.addEventListener('DOMContentLoaded', function () {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+    });
+</script>
+
     @auth
     <script>
     document.getElementById('global-search').addEventListener('input', function () {

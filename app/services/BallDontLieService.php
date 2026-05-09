@@ -56,4 +56,13 @@ class BallDontLieService
         ]);
         return $response['data'] ?? [];
     }
+
+    public function getTodayGames(): array
+{
+    $response = $this->get('/games', [
+        'dates[]'  => date('Y-m-d'),
+        'per_page' => 15,
+    ]);
+    return $response['data'] ?? [];
+}
 }

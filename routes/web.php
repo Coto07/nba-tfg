@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
     // Simulador
     Route::get('/simulator', [SimulatorController::class, 'index'])->name('simulator.index');
     Route::post('/simulator', [SimulatorController::class, 'simulate'])->name('simulator.simulate');
+    Route::get('/simulator/{simulation}/pdf', [SimulatorController::class, 'exportPdf'])->name('simulator.pdf');
 
     // Comparador
     Route::get('/compare', [CompareController::class, 'index'])->name('compare.index');
